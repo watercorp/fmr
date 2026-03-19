@@ -1,2 +1,96 @@
-# fmr
-Frontmatter Replacment
+# Frontmatter Replacment (fmr)
+`fmr` allows you to take YAML frontmatter defined in a Markdown file, and replace content in the file with that frontmatter.
+
+It also allows you to replace data in a different file if necessary, along with replacing the content in files using templates.
+
+All templates are based on the formatting using the Go `text/template` package.
+
+This tool was developed to help generate live Markdown documentation from templates, where data is updated as it's acquired and the heavy use of task list items `- [ ]` to `- [X]` 
+
+> Replacements are simply text replacements and do not handle file formatting or specific formats at this time. This does mean that any file with plain text is supported though. Additionally, this does not currently utilize the `html/template` package for `.html` files
+
+> This tool is a personal project, learning experience, and a work in progress. There are likely better ways to acheive some of what this does. Feel free to submit a PR and make suggestions!
+
+## Build the software
+```shell
+go build
+```
+
+## Example Usage
+1. Define some frontmatter in a Markdown file
+    ```yaml
+    ---
+    companyName: Water Corp
+    customerId: 1234
+    mainServer:
+        fqdn: main.example.com
+        ip: 10.0.0.1
+    directoryServers:
+        - dc1.example.com
+        - dc2.example.com
+    ---
+    ```
+2. Add some documentation in your file and add replacement placeholders
+    ```
+    1. Create a new entry in the client documentation
+        ```
+        Company: {companyName}
+        Customer Id: {customerId}
+        ```
+    2. Configure the main server with the following information
+        | Setting | Value                    |
+        | ------- | ------------------------ |
+        | fqdn    | `{{ .mainServer.fqdn }}` |
+        | ip      | `{{ .mainServer.ip }}`   |
+    ```
+
+3. Run `fmr`
+    ```
+    fmr replace source --source WaterCorp.md
+    ```
+
+## Supported Commands & Arguments
+Starting with `fmr` and following the tree
+
+- `replace`
+
+    Replace data using frontmatter
+  - `source`
+
+    Replace data directly in the source markdown file using frontmatter in the same file
+    - `--source`, `-s` File path to the source file with the frontmatter
+
+  - `template`
+
+    Replace all data in the source file using the template file. This will merge the frontmatter between the two files with precedence given to the source file.
+
+    - `--source`, `-s` File path to the source file with the frontmatter
+    - `--template`, `-t` File path to the template file
+    - `--retain-task-list-items`, `-r` and `--no-retain-task-list-items`, `-no-r` Defaults to true unless you specify the `no` version. This will search the source file for checked Markdown task list items `- [X] Step Here` and find a matching task list item in the template, and if found, re-check the item when replacing the source file.
+
+  - `other`
+
+    Replace data in a non-markdown file, optionally from a template, using frontmatter defined in the source file.
+
+    If the template is a `.json` or `.jsonc` file, use `<<` and `>>` for the delimiters instead of `{{` and `}}` to avoid automatic formatting causing issues with your template.
+
+    - `--source`, `-s` File path to the source file with the frontmatter
+    - `--template`, `-t` (Optional) File path to the template file
+    - `--destination` `-d` File path to the destination file that will be replaced using the frontmatter, optionally from the template
+
+- `validate`
+
+    Performs validation of files
+
+  - `task-list-items`
+    
+    Checks task list items in markdown files. Checks for items in both the source and template files that are not uniquely named and for items missing from the template that are checked in the source file. Both would currently would cause issues with re-checking task list items items.
+
+    - `--source`, `-s` File path to the source file with the frontmatter and checked task list items
+    - `--template`, `-t` File path to the template file with the template and unchecked task list items
+
+# TODO
+- [ ] Tests
+- [ ] Version updates
+- [ ] Releases with artifacts built automatically
+- [ ] Some refactor / cleanup
