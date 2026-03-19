@@ -49,6 +49,22 @@ go build
     fmr replace source --source WaterCorp.md
     ```
 
+## Custom Template Functions
+Some custom functions have been defined to help with some specific template needs
+
+- `title`: Title cases the text using `language.Und`
+- `upper`: Maps to `strings.ToUpper`
+- `lower`: Maps to `strings.ToLower`
+- `trimprefix`: Maps to `strings.TrimPrefix` with the argument order swapped to support the pipeline
+- `trimsuffix`: Maps to `strings.TrimSuffix` with the argument order swapped to support the pipeline
+- `join`: Maps to `strings.Join`
+- `part`: Returns the specific index of a string split by the delimiter. Format is `part <input> <index> <delim>`
+- `shortFqdn`: Returns the first part of a domain name. e.g. `one.example.com` -> `one`
+- `dn`: Contructs a LDAP Distinguished Name. Takes up to 3 arguments
+  - Domain name as FQDN e.g. `one.exmaple.com` converted to the `DC=` portion
+  - (Optional) OU as FQDN e.g. `computers.org` converted to the `OU=` portion in the order specified e.g. `OU=computers,OU=org`
+  - (Optional) CN as a normal value added as `CN=`
+
 ## Supported Commands & Arguments
 Starting with `fmr` and following the tree
 
