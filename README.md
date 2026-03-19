@@ -3,7 +3,7 @@
 
 It also allows you to replace data in a different file if necessary, along with replacing the content in files using templates.
 
-All templates are based on the formatting using the Go `text/template` package.
+All templates are based on the formatting using the Go [`text/template`](https://pkg.go.dev/text/template) package.
 
 This tool was developed to help generate live Markdown documentation from templates, where data is updated as it's acquired and the heavy use of task list items `- [ ]` to `- [X]` 
 
@@ -34,8 +34,8 @@ go build
     ```
     1. Create a new entry in the client documentation
         ```
-        Company: {companyName}
-        Customer Id: {customerId}
+        Company: {{ .companyName }}
+        Customer Id: {{ .customerId }}
         ```
     2. Configure the main server with the following information
         | Setting | Value                    |
