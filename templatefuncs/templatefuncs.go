@@ -1,6 +1,7 @@
 package templatefuncs
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"regexp"
@@ -18,6 +19,7 @@ var FuncMap = template.FuncMap{
 	"dn":         DistinguishedName,
 	"join":       strings.Join,
 	"joinstr":    JoinStrings,
+	"json":       ToJson,
 	"lower":      strings.ToLower,
 	"part":       StringPart,
 	"replace":    ReplaceString,
@@ -63,6 +65,15 @@ func DistinguishedName(values ...string) (string, error) {
 
 func JoinStrings(d string, parts ...string) string {
 	return strings.Join(parts, d)
+}
+
+func ToJson(data any) (string, error) {
+	b, err := json.Marshal(data)
+	if err != nil {
+		return "", err
+	}
+
+	return string(b), nil
 }
 
 // Takes the string and returns the specified part after being split by the delimiter
