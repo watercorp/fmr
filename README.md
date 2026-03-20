@@ -58,6 +58,7 @@ Some custom functions have been defined to help with some specific template need
   - (Optional) CN as a normal value added as `CN=`
 - `join`: Maps to `strings.Join`
 - `joinstr`: Joins all provided strings as arguments by the delimiter. Format is `joinstr <delim> <parts>...`
+- `json`: Returns the JSON encoded string of the input.
 - `lower`: Maps to `strings.ToLower`
 - `part`: Returns the specific index of a string split by the delimiter. Format is `part <input> <index> <delim>`
 - `replace`: Performs a regex replacement using `regexp.ReplaceAllString`. Format is `replace <pattern> <sourceString> <replacement>`
