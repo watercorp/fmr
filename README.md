@@ -58,6 +58,7 @@ Some custom functions have been defined to help with some specific template need
 - `trimprefix`: Maps to `strings.TrimPrefix` with the argument order swapped to support the pipeline
 - `trimsuffix`: Maps to `strings.TrimSuffix` with the argument order swapped to support the pipeline
 - `join`: Maps to `strings.Join`
+- `joinstr`: Joins all provided strings as arguments by the delimiter. Format is `joinstr <delim> <parts>...`
 - `part`: Returns the specific index of a string split by the delimiter. Format is `part <input> <index> <delim>`
 - `shortFqdn`: Returns the first part of a domain name. e.g. `one.example.com` -> `one`
 - `dn`: Contructs a LDAP Distinguished Name. Takes up to 3 arguments
