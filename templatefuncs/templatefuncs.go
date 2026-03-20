@@ -36,7 +36,6 @@ func trimSuffix(suffix string, s string) string {
 }
 
 func JoinStrings(d string, parts ...string) string {
-	// Create a new slice from the parts
 	return strings.Join(parts, d)
 }
 
