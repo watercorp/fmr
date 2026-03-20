@@ -20,6 +20,7 @@ var FuncMap = template.FuncMap{
 	"trimprefix": trimPrefix,
 	"trimsuffix": trimSuffix,
 	"join":       strings.Join,
+	"joinstr":    JoinStrings,
 	"part":       StringPart,
 	"shortFqdn":  ShortFqdn,
 	"dn":         DistinguishedName,
@@ -32,6 +33,10 @@ func trimPrefix(prefix string, s string) string {
 
 func trimSuffix(suffix string, s string) string {
 	return strings.TrimSuffix(s, suffix)
+}
+
+func JoinStrings(d string, parts ...string) string {
+	return strings.Join(parts, d)
 }
 
 // Takes the string and returns the specified part after being split by the delimiter
