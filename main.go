@@ -9,6 +9,9 @@ import (
 	"github.com/watercorp/fmr/process"
 )
 
+// Version passed in during build
+var Version string = "dev"
+
 type cliConfig struct {
 	Source              string
 	Template            string
@@ -22,7 +25,7 @@ var cliConf = &cliConfig{}
 func main() {
 	// Define the commands
 	cli := &cli.Command{
-		Version:                "0.0.2",
+		Version:                Version,
 		UseShortOptionHandling: true,
 		Commands: []*cli.Command{
 			{
