@@ -1,0 +1,10 @@
+{
+    "one": "<<.one>>",
+    "two": "<<.two>>",
+    "topNested": "<<.top.nested>>",
+    "list": [
+        "<<index .list 0>>",
+        "<<index .list 1>>"
+    ],
+    "fullList": <<json .list>>
+}

@@ -1,0 +1,10 @@
+{
+    "one": "value 1",
+    "two": "value 2",
+    "topNested": "nested value",
+    "list": [
+        "item 1",
+        "item 2"
+    ],
+    "fullList": ["item 1","item 2"]
+}
