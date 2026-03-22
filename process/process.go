@@ -16,6 +16,9 @@ import (
 	"github.com/watercorp/fmr/templatefuncs"
 )
 
+// Set the writer for validation
+var ValidateWriter io.Writer = os.Stdout
+
 func ReplaceSourceFromTemplate(sourceFilePath string, templateFilePath string, retainTaskListItems bool) error {
 	// Generate file details for the source and template paths to simpilify processing
 	sourceFd := filedetails.New(sourceFilePath)
@@ -56,11 +59,11 @@ func ReplaceSourceFromTemplate(sourceFilePath string, templateFilePath string, r
 	newTemplateWriter := bufio.NewWriter(newTemplateBuffer)
 
 	// Gather the frontmater from both the source and the template
-	sourceFrontmatter, err := frontmatter.New(sourceReader, false)
+	sourceFrontmatter, err := frontmatter.New(sourceReader)
 	if err != nil {
 		return err
 	}
-	templateFrontmatter, err := frontmatter.New(templateReader, false)
+	templateFrontmatter, err := frontmatter.New(templateReader)
 	if err != nil {
 		return err
 	}
@@ -78,7 +81,7 @@ func ReplaceSourceFromTemplate(sourceFilePath string, templateFilePath string, r
 	}
 
 	// Write the merged frontmatter to the temporary output file
-	newTemplateBuffer.Write(mergedFrontmatter)
+	newTemplateBuffer.Write(mergedFrontmatter.WrappedWithSeparatorBytes())
 
 	// Only handle checked task items if we need to
 	if retainTaskListItems {
@@ -159,7 +162,7 @@ func ReplaceSourceOnly(sourceFilePath string) error {
 	outputTempWriter := bufio.NewWriter(outputTempFile)
 
 	// Gather the frontmater from the source
-	sourceFrontmatter, err := frontmatter.New(sourceReader, false)
+	sourceFrontmatter, err := frontmatter.New(sourceReader)
 	if err != nil {
 		return err
 	}
@@ -231,7 +234,7 @@ func ReplaceOther(sourceFilePath string, destinationFilePath string, templateFil
 	destinationTempWriter := bufio.NewWriter(destinationTempFile)
 
 	// Gather the frontmater from the source
-	sourceFrontmatter, err := frontmatter.New(sourceReader, false)
+	sourceFrontmatter, err := frontmatter.New(sourceReader)
 	if err != nil {
 		return err
 	}
@@ -254,7 +257,7 @@ func ReplaceOther(sourceFilePath string, destinationFilePath string, templateFil
 	tmpl := template.New(finalTemplateFd.Name).Funcs(templatefuncs.FuncMap)
 
 	// Check if we need to adjust the delimiters
-	if slices.Contains([]string{"json", "jsonc"}, destinationFd.Extension) {
+	if slices.Contains([]string{".json", ".jsonc"}, destinationFd.Extension) {
 		// Switch the delimiters to ";;" for JSON files
 		tmpl = tmpl.Delims("<<", ">>")
 	}
@@ -282,9 +285,6 @@ func ReplaceOther(sourceFilePath string, destinationFilePath string, templateFil
 
 func ValidateTaskListItems(sourceFilePath string, templateFilePath string) error {
 	// Initialize variables
-	// var lastFoundSource, lastFoundTemplate *md.TaskListItem
-	// var sourceAllRead, templateAllRead bool
-	// var pauseSource, pauseTemplate bool
 	var sourceTaskListItems, templateTaskListItems []md.TaskListItem
 	var sourceUniqueTaskListItems = map[string]map[string]bool{}
 	var templateUniqueTaskListItems = map[string]map[string]bool{}
@@ -409,29 +409,29 @@ func ValidateTaskListItems(sourceFilePath string, templateFilePath string) error
 	// Check if we have any found issues
 	if len(errorLists.SourceNonUnique) > 0 || len(errorLists.TemplateNonUnique) > 0 || len(errorLists.TemplateMissingCheckedTask) > 0 {
 		if len(errorLists.TemplateNonUnique) > 0 {
-			fmt.Println("Template - Non-Unique Task Items Found:")
+			fmt.Fprintln(ValidateWriter, "Template - Non-Unique Task Items Found:")
 			for _, v := range errorLists.TemplateNonUnique {
-				fmt.Println(v)
+				fmt.Fprintln(ValidateWriter, v)
 			}
-			fmt.Println()
+			fmt.Fprintln(ValidateWriter)
 		}
 
 		if len(errorLists.SourceNonUnique) > 0 {
-			fmt.Println("Source - Non-Unique Task Items Found:")
+			fmt.Fprintln(ValidateWriter, "Source - Non-Unique Task Items Found:")
 			for _, v := range errorLists.SourceNonUnique {
-				fmt.Println(v)
+				fmt.Fprintln(ValidateWriter, v)
 			}
-			fmt.Println()
+			fmt.Fprintln(ValidateWriter)
 		}
 
 		if len(errorLists.TemplateMissingCheckedTask) > 0 {
-			fmt.Println("Template - Missing Tasks for Checked Item:")
+			fmt.Fprintln(ValidateWriter, "Template - Missing Tasks for Checked Item:")
 			for _, v := range errorLists.TemplateMissingCheckedTask {
-				fmt.Println(v)
+				fmt.Fprintln(ValidateWriter, v)
 			}
 		}
 	} else {
-		fmt.Println("No issues found with Source or Template!")
+		fmt.Fprintln(ValidateWriter, "No issues found with Source or Template!")
 	}
 
 	return nil
@@ -458,7 +458,7 @@ func recordTaskItems(reader *bufio.Reader, matchCheckedState bool, checked bool)
 		if err == nil {
 			if matchCheckedState && match.Checked == checked {
 				taskListItems = append(taskListItems, *match)
-			} else {
+			} else if !matchCheckedState {
 				taskListItems = append(taskListItems, *match)
 			}
 		}

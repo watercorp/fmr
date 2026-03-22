@@ -1,7 +1,7 @@
 package filedetails
 
 import (
-	"path"
+	"path/filepath"
 	"strings"
 )
 
@@ -14,17 +14,17 @@ type FileDetails struct {
 }
 
 // Create a new instance of FileDetails from the full file path
-func New(filePath string) FileDetails {
+func New(inputPath string) FileDetails {
 	// Store some items we need to reuse
-	basePath := path.Base(filePath)
+	basePath := filepath.Base(inputPath)
 	ext := getFullExtension(basePath)
 
 	return FileDetails{
-		FullPath:  filePath,
+		FullPath:  inputPath,
 		Name:      basePath,
-		Directory: path.Dir(filePath),
+		Directory: filepath.Dir(inputPath),
 		Extension: ext,
-		BaseName:  basePath[:len(basePath)-len(ext)],
+		BaseName:  strings.TrimSuffix(basePath, ext),
 	}
 }
 
@@ -34,13 +34,13 @@ func (fd FileDetails) String() string {
 }
 
 // Get the extension from the first dot
-func getFullExtension(baseName string) string {
+func getFullExtension(name string) string {
 	// Locate the index of the first .
-	firstIndex := strings.Index(baseName, ".")
+	firstIndex := strings.Index(name, ".")
 
 	// Confirm we've found an index and it's not at the beginning of the file
 	if firstIndex >= 1 {
-		return baseName[firstIndex+1:]
+		return name[firstIndex:]
 	} else {
 		return ""
 	}

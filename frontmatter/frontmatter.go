@@ -15,7 +15,7 @@ const SEP = "---"
 
 type Frontmatter []byte
 
-func New(reader *bufio.Reader, readToEnd bool) (Frontmatter, error) {
+func New(reader *bufio.Reader) (Frontmatter, error) {
 	// Create a variables to store the parsed frontmatter and buffer
 	var (
 		buf      strings.Builder
@@ -30,7 +30,7 @@ func New(reader *bufio.Reader, readToEnd bool) (Frontmatter, error) {
 		// Read the line in
 		line, _, err := reader.ReadLine()
 		if err != nil && err != io.EOF {
-			break
+			return nil, err
 		}
 
 		// Break if we've reached the end of the file somehow
@@ -51,14 +51,17 @@ func New(reader *bufio.Reader, readToEnd bool) (Frontmatter, error) {
 				fm = []byte(buf.String())
 
 				// Leave the reader where it is for further file processing
-				if !readToEnd {
-					break
-				}
+				break
 			}
 		} else if inside {
 			// Write the frontmatter to the buffer for later parsing
 			fmt.Fprintf(&buf, "%s\n", line)
 		}
+	}
+
+	// If the frontmatter is not captured, return an error
+	if !captured {
+		return nil, fmt.Errorf("unable to capture frontmatter")
 	}
 
 	return fm, err
@@ -118,11 +121,7 @@ func Merge(base []byte, patch []byte) (Frontmatter, error) {
 		return nil, err
 	}
 
-	// Wrap the merged yaml in fronmatter separators
-	merged := fmt.Sprintf("%s\n%s%s\n", SEP, baseYaml.String(), SEP)
-
-	return []byte(merged), nil
-
+	return []byte(baseYaml.String()), nil
 }
 
 func cleanMap(m map[string]any) map[string]any {
@@ -159,7 +158,7 @@ func isEmpty(v any) bool {
 	switch rv.Kind() {
 	case reflect.String, reflect.Array, reflect.Slice, reflect.Map:
 		return rv.Len() == 0
-	case reflect.Ptr, reflect.Interface:
+	case reflect.Pointer, reflect.Interface:
 		return rv.IsNil()
 	}
 

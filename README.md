@@ -109,7 +109,7 @@ Starting with `fmr` and following the tree
     - `--template`, `-t` File path to the template file with the template and unchecked task list items
 
 # TODO
-- [ ] Tests
+- [X] Tests
 - [ ] Version updates
 - [ ] Releases with artifacts built automatically
 - [ ] Some refactor / cleanup

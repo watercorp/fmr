@@ -22,7 +22,7 @@ var cliConf = &cliConfig{}
 func main() {
 	// Define the commands
 	cli := &cli.Command{
-		Version:                "0.0.1",
+		Version:                "0.0.2",
 		UseShortOptionHandling: true,
 		Commands: []*cli.Command{
 			{
