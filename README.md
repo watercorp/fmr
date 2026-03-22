@@ -12,6 +12,17 @@ This tool was developed to help generate live Markdown documentation from templa
 >
 > This tool is a personal project, learning experience, and a work in progress. There are likely better ways to acheive some of what this does. Feel free to submit a PR and make suggestions!
 
+# Install
+## Build it yourself
+```
+go build
+```
+
+## Grab a release
+Go to the GitHub releases and download the build
+> [!WARNING]
+> The releases are not currently signed and will give warnings when attempting to use them.
+
 # Example Usage
 1. Define some frontmatter in a Markdown file
     ```yaml
