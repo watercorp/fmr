@@ -14,13 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Create GitHub App Token
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         id: app-token
         with:
           app-id: ${{ vars.WATERCORP_DEPLOY_APPID }}
           private-key: ${{ secrets.WATERCORP_DEPLOY_SECRET }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            homebrew-tap
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -39,7 +42,7 @@ jobs:
           fi
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ steps.go-version.outputs.go-version }}
 
@@ -55,12 +58,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Get GitHub App User ID
+        id: get-user-id
+        run: echo "user-id=$(gh api "/users/${{ steps.app-token.outputs.app-slug }}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
       - name: Checkout Homebrew Tap
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: 'watercorp/homebrew-tap'
           token: ${{ steps.app-token.outputs.token }}
           path: 'homebrew-tap'
+          persist-credentials: false
 
       - name: Update Homebrew Tap
         run: |
@@ -82,10 +92,8 @@ jobs:
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
           cd homebrew-tap
-          git config user.name "watercorpbot"
-          git config user.email "bot@watercorp.net"
+          git config --global user.name '${{ steps.app-token.outputs.app-slug }}[bot]'
+          git config --global user.email '${{ steps.get-user-id.outputs.user-id }}+${{ steps.app-token.outputs.app-slug }}[bot]@users.noreply.github.com'
           git add .
           git commit -m "Automated fmr Release ${TAG_NAME}"
           git push origin main
-        env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
