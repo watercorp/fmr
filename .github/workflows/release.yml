@@ -6,12 +6,20 @@ on:
       - 'v*'
 
 permissions:
+  id-token: write
   contents: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Create GitHub App Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ vars.WATERCORP_DEPLOY_APPID }}
+          private-key: ${{ secrets.WATERCORP_DEPLOY_SECRET }}
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -46,3 +54,36 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout Homebrew Tap
+        uses: actions/checkout@v4
+        with:
+          repository: 'watercorp/homebrew-tap'
+          token: ${{ steps.app-token.outputs.token }}
+          path: 'homebrew-tap'
+
+      - name: Update Homebrew Tap
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          ARCHIVE_URL="https://github.com/watercorp/fmr/archive/refs/tags/${TAG_NAME}.tar.gz"
+
+          # Download the archive and calculate the checksum
+          wget $ARCHIVE_URL
+          CHECKSUM=$(sha256sum "${TAG_NAME}.tar.gz" | awk '{print $1}')
+
+          # Update the replacements
+          sed -i "s|REPLACE_ARCHIVE_URL|${ARCHIVE_URL}|g" tools/homebrew-formula-template.rb
+          sed -i "s/REPLACE_CHECKSUM/${CHECKSUM}/g" tools/homebrew-formula-template.rb
+
+          # Copy the replaced template
+          cp -f fmr-homebrew-template.rb homebrew-tap/Formula/fmr.rb
+      
+      - name: Push Homebrew Tap
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          cd homebrew-tap
+          git config user.name "watercorpbot"
+          git config user.email "bot@watercorp.net"
+          git add .
+          git commit -m "Automated fmr Release ${TAG_NAME}"
+          git push origin main
