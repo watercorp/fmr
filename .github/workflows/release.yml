@@ -72,8 +72,8 @@ jobs:
           CHECKSUM=$(sha256sum "${TAG_NAME}.tar.gz" | awk '{print $1}')
 
           # Update the replacements
-          sed -i "s|REPLACE_ARCHIVE_URL|${ARCHIVE_URL}|g" tools/homebrew-formula-template.rb
-          sed -i "s/REPLACE_CHECKSUM/${CHECKSUM}/g" tools/homebrew-formula-template.rb
+          sed -i "s|REPLACE_ARCHIVE_URL|${ARCHIVE_URL}|g" fmr-homebrew-template.rb
+          sed -i "s/REPLACE_CHECKSUM/${CHECKSUM}/g" fmr-homebrew-template.rb
 
           # Copy the replaced template
           cp -f fmr-homebrew-template.rb homebrew-tap/Formula/fmr.rb
