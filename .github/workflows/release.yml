@@ -20,8 +20,6 @@ jobs:
           app-id: ${{ vars.WATERCORP_DEPLOY_APPID }}
           private-key: ${{ secrets.WATERCORP_DEPLOY_SECRET }}
           owner: ${{ github.repository_owner }}
-          repositories: |
-            homebrew-tap
 
       - uses: actions/checkout@v6
         with:
@@ -97,3 +95,5 @@ jobs:
           git add .
           git commit -m "Automated fmr Release ${TAG_NAME}"
           git push origin main
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
