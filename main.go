@@ -10,7 +10,7 @@ import (
 )
 
 // Version passed in during build
-var Version string = "dev"
+var version string = "dev"
 
 type cliConfig struct {
 	Source              string
@@ -25,8 +25,9 @@ var cliConf = &cliConfig{}
 func main() {
 	// Define the commands
 	cli := &cli.Command{
-		Version:                Version,
+		Version:                version,
 		UseShortOptionHandling: true,
+		EnableShellCompletion:  true,
 		Commands: []*cli.Command{
 			{
 				Name:  "replace",
