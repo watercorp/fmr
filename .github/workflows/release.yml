@@ -87,3 +87,5 @@ jobs:
           git add .
           git commit -m "Automated fmr Release ${TAG_NAME}"
           git push origin main
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
