@@ -8,7 +8,6 @@ class Fmr < Formula
   depends_on "go" => :build
 
   def install
-    zsh_completion.install "_fmr"
     system "go", "build", *std_go_args(ldflags: "-w -s -X main.version=#{version}")
   end
 
