@@ -123,8 +123,9 @@ func ReplaceSourceFromTemplate(sourceFilePath string, templateFilePath string, r
 	// Flush the output temp writer
 	outputTempWriter.Flush()
 
-	// Ensure the source file is closed
+	// Ensure the source file and temp file are closed
 	sourceFile.Close()
+	outputTempFile.Close()
 
 	// Rename the temporary output to the source file
 	err = os.Rename(outputTempFd.FullPath, sourceFd.FullPath)
@@ -194,8 +195,9 @@ func ReplaceSourceOnly(sourceFilePath string) error {
 	// Flush the output temp writer
 	outputTempWriter.Flush()
 
-	// Ensure the source file is closed
+	// Ensure the source file and temp file are closed
 	sourceFile.Close()
+	outputTempFile.Close()
 
 	// Rename the temporary output to the source file
 	err = os.Rename(outputTempFd.FullPath, sourceFd.FullPath)
@@ -273,6 +275,9 @@ func ReplaceOther(sourceFilePath string, destinationFilePath string, templateFil
 
 	// Flush the destination temp writer
 	destinationTempWriter.Flush()
+
+	// Ensure the destination temp file is closed
+	destinationTempFile.Close()
 
 	// Rename the temporary destination to the destination file
 	err = os.Rename(destinationTempFd.FullPath, destinationFd.FullPath)
