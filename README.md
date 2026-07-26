@@ -72,9 +72,15 @@ Some custom functions have been defined to help with some specific template need
 
 **`lower`**: Maps to `strings.ToLower`
 
+**`md5File`**: Generates the MD5 hash from the supplied file path
+
 **`part`**: Returns the specific index of a string split by the delimiter. Format is `part <input> <index> <delim>`
 
 **`replace`**: Performs a regex replacement using `regexp.ReplaceAllString`. Format is `replace <pattern> <sourceString> <replacement>`
+
+**`sha1File`**: Generates the SHA1 hash from the supplied file path
+
+**`sha256File`**: Generates the SHA256 hash from the supplied file path
 
 **`shortFqdn`**: Returns the first part of a domain name. e.g. `one.example.com` -> `one`
 
