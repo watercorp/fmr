@@ -178,6 +178,54 @@ func TestTemplateFuncs_FileHashes(t *testing.T) {
 	}
 }
 
+func TestTemplateFuncs_Join(t *testing.T) {
+	// Define the successful test cases
+	tests := []struct {
+		delim    string
+		parts    []any
+		expected string
+	}{
+		{
+			delim:    ".",
+			parts:    []any{"one", "two"},
+			expected: "one.two",
+		},
+		{
+			delim:    ".",
+			parts:    []any{"one", 2, true},
+			expected: "one.2.true",
+		},
+		{
+			delim:    ".",
+			parts:    []any{"one"},
+			expected: "one",
+		},
+		{
+			delim:    " ",
+			parts:    []any{"one", "two", "three"},
+			expected: "one two three",
+		},
+		{
+			delim:    "...",
+			parts:    []any{"one", "two", "three"},
+			expected: "one...two...three",
+		},
+	}
+
+	// Loop through each test case
+	for i, tc := range tests {
+		t.Run(fmt.Sprintf("join  %d", i), func(t *testing.T) {
+			// Call the Join function
+			joined := templatefuncs.Join(tc.parts, tc.delim)
+
+			// Confirm the values match
+			if joined != tc.expected {
+				t.Errorf("values do not match, have %s want %s", joined, tc.expected)
+			}
+		})
+	}
+}
+
 func TestTemplateFuncs_JoinStrings(t *testing.T) {
 	// Define the successful test cases
 	tests := []struct {

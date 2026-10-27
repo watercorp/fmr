@@ -24,7 +24,7 @@ var titleCaser = cases.Title(language.Und)
 // Define the func map
 var FuncMap = template.FuncMap{
 	"dn":         DistinguishedName,
-	"join":       strings.Join,
+	"join":       Join,
 	"joinstr":    JoinStrings,
 	"json":       ToJson,
 	"lower":      strings.ToLower,
@@ -108,6 +108,21 @@ func hashFile(filePath string, hashAlg string) (string, error) {
 
 	// Return the string representation
 	return hex.EncodeToString(hashBytes), nil
+}
+
+// Joins the passed slice using the delimiter
+func Join(parts []any, d string) string {
+	// Create a new string slice
+	strs := make([]string, len(parts))
+
+	// Create the string representation of the values
+	for i, v := range parts {
+		strs[i] = fmt.Sprintf("%v", v)
+	}
+
+	// Call strings.Join
+	x := strings.Join(strs, d)
+	return x
 }
 
 // Joins all passed strings using the delimiter
