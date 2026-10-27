@@ -64,13 +64,13 @@ Some custom functions have been defined to help with some specific template need
   - (Optional) OU as FQDN e.g. `computers.org` converted to the `OU=` portion in the order specified e.g. `OU=computers,OU=org`
   - (Optional) CN as a normal value added as `CN=`
 
-**`join`**: Maps to `strings.Join`
+**`join`**: Joins the provided array with the delimiter. Format is `join <parts> <delim>`
 
 **`joinstr`**: Joins all provided strings as arguments by the delimiter. Format is `joinstr <delim> <parts>...`
 
 **`json`**: Returns the JSON encoded string of the input.
 
-**`lower`**: Maps to `strings.ToLower`
+**`lower`**: Lowercases text. Format is `lower <text>`
 
 **`md5File`**: Generates the MD5 hash from the supplied file path
 
@@ -86,11 +86,11 @@ Some custom functions have been defined to help with some specific template need
 
 **`title`**: Title cases the text using `language.Und`
 
-**`trimprefix`**: Maps to `strings.TrimPrefix` with the argument order swapped to support the pipeline
+**`trimprefix`**: Trims the specified prefix from the text. Format is `trimprefix <prefix> <text>`
 
-**`trimsuffix`**: Maps to `strings.TrimSuffix` with the argument order swapped to support the pipeline
+**`trimsuffix`**: Trims the specified suffix from the text. Format is `trimsuffix <suffix> <text>`
 
-**`upper`**: Maps to `strings.ToUpper`
+**`upper`**: Uppercases text. Format is `upper <text>`
 
 # Usage
 ```
