@@ -23,28 +23,14 @@ jobs:
           repositories: |
             homebrew-tap
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
         with:
           fetch-depth: 0
 
-      - name: Determine Go Version
-        id: go-version
-        run: |
-          goMod=$(cat go.mod)
-          goVersionRegex="go (1\.[0-9\.]+)"
-          if [[ $goMod =~ $goVersionRegex ]]; then
-            goVersion="${BASH_REMATCH[1]}"
-            echo "Go version found in go.mod: $goVersion"
-            echo "go-version=$goVersion" >> $GITHUB_OUTPUT
-          else
-              echo "Go version not found in go.mod"
-              exit 1
-          fi
-
       - name: Set up Go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # 7.0.0
         with:
-          go-version: ${{ steps.go-version.outputs.go-version }}
+          go-version-file: 'go.mod'
 
       - name: Run Tests
         run: go test -v ./...
@@ -65,7 +51,7 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Checkout Homebrew Tap
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # 7.0.1
         with:
           repository: 'watercorp/homebrew-tap'
           token: ${{ steps.app-token.outputs.token }}
